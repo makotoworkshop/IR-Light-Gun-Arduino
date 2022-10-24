@@ -6,6 +6,17 @@
 #include <math.h>
 #include "WiiLib.h"
 #include "MouseAbs.h"
+#include <Joystick.h>
+
+//#——JOYSTICK——#
+Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID,JOYSTICK_TYPE_JOYSTICK,
+  1, 0,                  // Button Count, Hat Switch Count
+  true, true, false,     // X and Y, but no Z Axis
+  false, false, false,   // No Rx, Ry, or Rz
+  false, false,          // No rudder or throttle
+  false, false, false);  // No accelerator, brake, or steering
+//#——JOYSTICK——#
+
 
 /* definition des equivalences */
 #define	Ratio	 			        1 			      // Ratio de l'ecran 1 = 4/3 et 0 = 16/9
@@ -42,11 +53,40 @@ void setup()
   pinMode(4,INPUT_PULLUP);  // Click Droit (Reload)
   pinMode(5,INPUT_PULLUP);  // Click Gauche (Tir)
   pinMode(6,INPUT_PULLUP);  // Click Milieu (Start)
+
+//#——JOYSTICK——# 
+  // Initialize Button Pins
+  pinMode(6, INPUT_PULLUP);
+
+//  Joystick.setXAxisRange(-127, 127);
+//  Joystick.setYAxisRange(-127, 127);
+  
+  Joystick.setXAxisRange(0, 255);
+  Joystick.setYAxisRange(0, 255);
+  pinMode(A0, INPUT_PULLUP);
+  pinMode(A1, INPUT_PULLUP);
+  // Initialize Joystick Library
+  Joystick.begin();
+//#——JOYSTICK——#
+  
 }
+
+//#——JOYSTICK——#
+// Constant that maps the phyical pin to the joystick button.
+const int pinToButtonMap = 6;
+
+// Last state of the button
+int lastButtonState = 0;
+//#——JOYSTICK——#
+
 
 /* Programme principal */
 void loop()
 {
+
+
+
+  
   /* Variables */
   unsigned char Counter = 0;
   unsigned int Ymoy;
@@ -132,10 +172,10 @@ void loop()
 //      Mouse.release(MOUSE_RIGHT);
     
     // Gestion du clic central  -> Start
-    if(digitalRead(6)==LOW)
-      Mouse.press(MOUSE_MIDDLE);
-    else
-      Mouse.release(MOUSE_MIDDLE);
+//    if(digitalRead(6)==LOW)
+//      Mouse.press(MOUSE_MIDDLE);
+//    else
+//      Mouse.release(MOUSE_MIDDLE);
 
 
 
@@ -174,18 +214,46 @@ void loop()
 
 
     /* Mode RELOAD automatique si le curseur sort de l'écran */
-//    if ( (Mouse.Actual_X == 1) & (Mouse.Actual_Y == 1) )
-//    {
-//      Serial.println("Reload !!! Clic Droit");   
-//      Mouse.press(MOUSE_RIGHT);
-//    }
-//    else
-//    {
-////      Serial.println("Load !!! ");   
-//      Mouse.release(MOUSE_RIGHT);
-//    }
+    if ( (Mouse.Actual_X == 1) & (Mouse.Actual_Y == 1) )
+    {
+      Serial.println("Reload !!! Clic Droit");   
+      Mouse.press(MOUSE_RIGHT);
+    }
+    else
+    {
+//      Serial.println("Load !!! ");   
+      Mouse.release(MOUSE_RIGHT);
+    }
 
     Serial.println(""); // Paragraphe
+
+//#——JOYSTICK——#
+  int xAxis = analogRead(A0);
+  int yAxis = analogRead(A1);
+  
+  Serial.print("A0 = ");
+  Serial.print(analogRead(A0));
+  Serial.print("  A1 = ");
+  Serial.println(analogRead(A1));
+
+//byte red  = map(xAxis, 0, 255, -127, 127);
+//byte blue = map(yAxis, 0, 255, -127, 127);
+  
+  Joystick.setXAxis(xAxis);
+  Joystick.setYAxis(yAxis);
+
+  // Read pin values
+    int currentButtonState = !digitalRead(pinToButtonMap);
+    if (currentButtonState != lastButtonState)
+    {
+      Joystick.setButton(0, currentButtonState);
+      lastButtonState = currentButtonState;
+    }
+
+//  delay(50);
+//#——JOYSTICK——#
+
+
     
 		while( (millis() - RefreshTime) < 20); // 20ms => 50 Hertz
 		Mouse.report(); // mettre à jour le curseur et les boutons
