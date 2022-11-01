@@ -3,7 +3,8 @@
  * Modifs Makoto Novembre 2022 :
  *  ok - Ajout du HID Joystick simultané (Stick XY et boutons)
  *  ok - Mode Souris : Reload activé si la souris sort de l'écran.
- *  - Switch de sélection pour désactiver mode Souris. (bien utile parfois…)
+ *  ok - Switch de sélection pour désactiver le mode Souris. (possiblement utile…)
+ *  ok - Switch de sélection pour désactiver le mode Reload. (bien utile souvent !)
  */
 
 #include <math.h>
