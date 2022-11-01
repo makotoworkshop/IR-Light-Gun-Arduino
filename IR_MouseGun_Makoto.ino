@@ -3,8 +3,8 @@
  * Modifs Makoto Novembre 2022 :
  *  ok - Ajout du HID Joystick simultané (Stick XY et boutons)
  *  ok - Mode Souris : Reload activé si la souris sort de l'écran.
- *  ok - Switch de sélection pour désactiver le mode Souris. (possiblement utile…)
- *  ok - Switch de sélection pour désactiver le mode Reload. (bien utile souvent !)
+ *  ok - Switch de sélection pour désactiver le mode Souris.
+ *  ok - Switch de sélection pour désactiver le mode Reload.
  */
 
 #include <math.h>
@@ -30,7 +30,7 @@ int lastReloadState = 0;          // Spécial pour Reload qui n'est pas câblé
 #define fullscale	  		    255				    // Valeur Max (Resolution de la camera moins 1)
 #define Resolution_Pn  	    255				    // Valeur Max (Resolution des potentiometres numerique moins 1)
 unsigned int Screen_wide = 55;            // largeur de l'écran en centimetres
-signed int Y_Correction =  28;            // Décallage en Hauteur par rapport à la barre IR
+signed int Y_Correction =  26;            // Décallage en Hauteur par rapport à la barre IR
 signed int X_Correction = 0;              // Décallage en Largeur (ou déplacer un tipeu la barre ;))
 unsigned int Wiibar_size = 20;            // Distance entre les 2 emetteurs Infra-Rouges
 
@@ -133,10 +133,10 @@ void loop()
 		Yc -= ( Y_Correction * Widesize ) / Screen_wide; 
 		Xc -= ( X_Correction * Widesize ) / Screen_wide;
 
-    Serial.print("Bouton Clic Droit : ");
-    Serial.println(digitalRead(4));
-    Serial.print("Bouton Clic Gauche : ");  
-    Serial.println(digitalRead(5));
+//    Serial.print("Bouton Clic Droit : ");
+//    Serial.println(digitalRead(4));
+//    Serial.print("Bouton Clic Gauche : ");  
+//    Serial.println(digitalRead(5));
 
     /* RAFRAICHIR LES BOUTONS */
     // Gestion du clic gauche -> Tir
@@ -158,10 +158,10 @@ void loop()
 		if(Xc>255)
 		  Xc=255;
 
-    Serial.print("Xc : ");  
-		Serial.print((int)Xc);
-		Serial.print(",  Yc : ");
-		Serial.println((int)Yc);
+//    Serial.print("Xc : ");  
+//		Serial.print((int)Xc);
+//		Serial.print(",  Yc : ");
+//		Serial.println((int)Yc);
 
 		if ( ((int)Xc == 0) & ((int)Yc == 0) )
 		{
@@ -173,10 +173,10 @@ void loop()
 			Mouse.Actual_X = map((int)Xc, 0, 255, 32767, 0);
 			Mouse.Actual_Y = map((int)Yc, 0, 255, 0, 32767);
 		} 
-    Serial.print("Souris Actual_X : "); 
-		Serial.print((int)Mouse.Actual_X);
-		Serial.print(",  Actual_Y : ");
-		Serial.println((int)Mouse.Actual_Y);
+//    Serial.print("Souris Actual_X : "); 
+//		Serial.print((int)Mouse.Actual_X);
+//		Serial.print(",  Actual_Y : ");
+//		Serial.println((int)Mouse.Actual_Y);
 
     /* Mode RELOAD automatique si le curseur sort de l'écran, géré par logiciel */
     ModeReload = digitalRead(8);
@@ -184,7 +184,7 @@ void loop()
     {
       if ( (Mouse.Actual_X == 1) & (Mouse.Actual_Y == 1) )  // si on sort de l'écran
       {
-        Serial.println("Reload !!! Clic Droit");   
+//        Serial.println("Reload !!! Clic Droit");   
         Mouse.press(MOUSE_RIGHT);
         Joystick.setButton(0, HIGH);  // Le reload est sur l'entrée 4, première décrite, donc « button 0 »
         lastReloadState = HIGH;
@@ -198,23 +198,23 @@ void loop()
     }
     else
     {
-      Serial.println("Mode Reload désactivé");
+//      Serial.println("Mode Reload désactivé");
       Mouse.release(MOUSE_RIGHT);
       Joystick.setButton(0, LOW);
       lastReloadState = LOW; 
     }
 
-    Serial.println(""); // Paragraphe
+//    Serial.println(""); // Paragraphe
 
 // Bloc JOYSTICK à situer impérativement ici
   // Valeurs du Stick envoyées au HID Device
     int xAxis = map(Xc, 0, 255, 255, 0);  // pour inverser l'axe X
     int yAxis = Yc;
 
-    Serial.print("Joystick xAxis = ");
-    Serial.print(xAxis);
-    Serial.print(",  yAxis = ");
-    Serial.println(yAxis);
+//    Serial.print("Joystick xAxis = ");
+//    Serial.print(xAxis);
+//    Serial.print(",  yAxis = ");
+//    Serial.println(yAxis);
   
     Joystick.setXAxis(xAxis);
     Joystick.setYAxis(yAxis);
@@ -229,8 +229,8 @@ void loop()
         lastButtonState[index] = currentButtonState;
       }
     }
-    Serial.print("Bouton Joystick : ");
-    Serial.println(digitalRead(6));
+//    Serial.print("Bouton Joystick : ");
+//    Serial.println(digitalRead(6));
 // Bloc JOYSTICK Fin
     
 		while( (millis() - RefreshTime) < 20); // 20ms => 50 Hertz
